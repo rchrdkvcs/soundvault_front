@@ -1,6 +1,13 @@
-import { defineConfig, presetWind3, transformerVariantGroup } from 'unocss'
+import { defineConfig, presetIcons, presetWind4, transformerVariantGroup } from 'unocss'
+import { presetDaisy } from '@ameinhardt/unocss-preset-daisy'
 
 export default defineConfig({
-  presets: [presetWind3()],
+  presets: [
+    presetDaisy({
+      themes: ['light', 'cupcake'],
+    }),
+    presetWind4(),
+    presetIcons(),
+  ],
   transformers: [transformerVariantGroup()],
 })

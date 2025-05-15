@@ -15,7 +15,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@ameinhardt/unocss-preset-daisy": "^1.1.7",
     "@unocss/reset": "66.1.0-beta.8",
+    "daisyui": "^5.0.35",
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
