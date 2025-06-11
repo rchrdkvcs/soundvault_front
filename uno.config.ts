@@ -4,7 +4,7 @@ import { presetDaisy } from '@ameinhardt/unocss-preset-daisy'
 export default defineConfig({
   presets: [
     presetDaisy({
-      themes: ['light', 'cupcake'],
+      themes: ['light', 'dark'],
     }),
     presetWind4(),
     presetIcons(),
