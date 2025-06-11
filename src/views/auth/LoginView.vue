@@ -12,7 +12,12 @@
       <label class="label">Password</label>
       <input type="password" class="input" placeholder="Password" />
 
-      <button class="btn btn-neutral mt-4">Login</button>
+      <button type="submit" class="btn btn-neutral mt-4">Login</button>
+
+      <p class="text-center mt-4">
+        Pas encore inscrit ? 
+        <RouterLink to="/register" class="link link-primary">S'inscrire</RouterLink>
+      </p>
     </form>
   </main>
 </template>
