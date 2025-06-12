@@ -1,8 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppLogo from '@/components/AppLogo.vue'
+</script>
 
 <template>
   <main class="w-full h-full flex flex-col justify-center items-center gap-8">
-    <h1 class="text-4xl font-bold">SoundVault</h1>
+    <AppLogo />
+
     <form class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
       <h2 class="text-2xl font-semibold">Se connecter</h2>
 
@@ -15,9 +18,13 @@
       <button type="submit" class="btn btn-neutral mt-4">Login</button>
 
       <p class="text-center mt-4">
-        Pas encore inscrit ? 
+        Pas encore inscrit ?
         <RouterLink to="/register" class="link link-primary">S'inscrire</RouterLink>
       </p>
     </form>
+
+    <p class="text-sm">
+      Pas encore de compte ? <RouterLink to="/register" class="link">Créer un compte</RouterLink>
+    </p>
   </main>
 </template>

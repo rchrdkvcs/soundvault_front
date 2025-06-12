@@ -1,49 +1,33 @@
 <script lang="ts" setup></script>
 
 <template>
-  <main class="flex flex-col p-4 md:p-6">
+  <main class="min-h-[calc(100vh-64px)] w-full flex items-center justify-center">
+    <div class="w-full max-w-6xl px-6 py-20 flex flex-col items-center text-center">
+      <div class="mb-10 relative">
+        <h1 class="text-5xl md:text-7xl font-bold relative text-base-content">SoundVault</h1>
+      </div>
 
-    <!-- Catégories -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 py-7">
+      <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-2xl mb-12">
+        Explorez, découvrez et partagez des plugins audio avec la communauté.
+      </p>
 
-      <a href="#">
-        <div class="card w-96 bg-base-100 card-sm shadow-sm">
-          <div class="card-body">
-            <h2 class="card-title">Effets</h2>        
-          </div>
-        </div>
-      </a>
+      <div class="flex flex-col md:flex-row gap-2">
+        <RouterLink to="/explore" class="btn btn-active hover:scale-105 transition-transform">
+          Explorer les plugins
+        </RouterLink>
+        <RouterLink
+          to="/library"
+          class="btn btn-ghost btn-neutral hover:scale-105 transition-transform"
+        >
+          Ma bibliothèque
+        </RouterLink>
+      </div>
 
-      <a href="#">
-        <div class="card w-96 bg-base-100 card-sm shadow-sm">
-          <div class="card-body">
-            <h2 class="card-title">Instruments</h2>
-          </div>
-        </div>
-      </a>
-
-     </div>
-    
-    <!-- Sélection de VST -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      <div v-for="(item, index) in 20" :key="index" class="card bg-base-100 shadow-sm">
-        <figure>
-          <img
-            src="../assets/serum2.webp"
-            alt="VST" 
-            class="w-full h-48 object-cover object-top"
-          />
-        </figure>
-        <div class="card-body">
-          <h2 class="card-title">
-            Card Title
-            <div class="badge badge-secondary">NEW</div>
-          </h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
-          <div class="card-actions justify-end">
-            <div class="badge badge-outline">Instrument</div>
-            <div class="badge badge-outline">Products</div>
-          </div>
+      <div
+        class="mt-20 w-full max-w-3xl rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-3"
+      >
+        <div class="w-full h-16 flex items-center justify-center">
+          <p class="text-base-content/75">Accédez à plus de 1000+ plugins audio professionnels</p>
         </div>
       </div>
     </div>
