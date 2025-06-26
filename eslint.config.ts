@@ -19,7 +19,6 @@ export default defineConfigWithVueTs(
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
 
-  pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
   ...oxlint.configs['flat/recommended'],
   skipFormatting,
