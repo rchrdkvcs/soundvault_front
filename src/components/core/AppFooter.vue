@@ -3,7 +3,7 @@ import AppLogo from '@/components/AppLogo.vue'
 </script>
 
 <template>
-  <footer class="footer sm:footer-horizontal bg-base-100 text-base-content p-10">
+  <footer class="footer sm:footer-horizontal text-base-content p-10 bg-base-300">
     <div>
       <AppLogo class="h-8 w-fit" />
 
