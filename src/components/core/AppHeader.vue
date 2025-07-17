@@ -1,199 +1,141 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-const router = useRouter()
 const authStore = useAuthStore()
 
-const searchQuery = ref('')
-const showMobileSearch = ref(false)
+const showMobileMenu = ref(false)
 
-const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    router.push({ name: 'vst-gallery', query: { search: searchQuery.value } })
-    showMobileSearch.value = false
-  }
-}
-
-const toggleMobileSearch = () => {
-  showMobileSearch.value = !showMobileSearch.value
+const toggleMobileMenu = () => {
+  showMobileMenu.value = !showMobileMenu.value
 }
 </script>
 
 <template>
-  <header>
-    <div class="grid grid-cols-3 items-center gap-4 px-4 py-2">
-      <!-- Logo -->
-      <div class="justify-start w-fit">
+  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-3 w-full h-16">
+        <!-- Logo -->
         <RouterLink to="/" class="flex items-center gap-2">
-          <img
-            src="../../assets/1203953.svg"
-            alt="Soundvault logo"
-            height="100"
-            width="100"
-            class="h-12 w-fit"
-          />
-          <span
-            class="hidden lg:block text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
-          >
-            SoundVault
-          </span>
+          <img src="/src/assets/images/icon.png" alt="Soundvault logo" class="h-8" />
         </RouterLink>
-      </div>
 
-      <!-- Search -->
-      <div class="flex justify-center w-full">
-        <div class="join hidden md:flex w-full max-w-md">
-          <input
-            v-model="searchQuery"
-            @keyup.enter="handleSearch"
-            type="text"
-            placeholder="Recherchez des plugins, créateurs..."
-            class="input input-bordered join-item flex-1"
-          />
-          <button @click="handleSearch" class="btn btn-primary join-item">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8 flex-1 justify-center">
+          <RouterLink
+            to="/"
+            class="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+          >
+            Accueil
+          </RouterLink>
+          <RouterLink
+            to="/vst-gallery"
+            class="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+          >
+            Galerie
+          </RouterLink>
+          <RouterLink
+            v-if="authStore.isAuthenticated"
+            to="/explore"
+            class="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+          >
+            Explorer
+          </RouterLink>
+          <RouterLink
+            v-if="authStore.isAuthenticated"
+            to="/bookmarks"
+            class="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+          >
+            Favoris
+          </RouterLink>
+        </nav>
+
+        <!-- User Actions -->
+        <div class="flex items-center justify-end gap-4">
+          <template v-if="authStore.isAuthenticated">
+            <!-- User Profile -->
+            <div class="relative">
+              <RouterLink
+                :to="`/profile/${authStore.user?.id}`"
+                class="flex items-center gap-2 hover:bg-gray-100 rounded-full p-2 transition-colors cursor-pointer"
+              >
+                <img
+                  v-if="authStore.user?.avatar"
+                  :src="authStore.user?.avatar"
+                  :alt="authStore.user?.username"
+                  class="w-8 h-8 rounded-full"
+                />
+                <div v-else class="w-8 h-8 rounded-full bg-gray-100 ring ring-gray-200" />
+                <span class="hidden sm:block text-sm font-medium text-gray-700">
+                  {{ authStore.user?.username }}
+                </span>
+              </RouterLink>
+            </div>
+          </template>
+
+          <template v-else>
+            <RouterLink
+              to="/login"
+              class="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+            >
+              Connexion
+            </RouterLink>
+            <RouterLink
+              to="/register"
+              class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors font-medium"
+            >
+              S'inscrire
+            </RouterLink>
+          </template>
+
+          <!-- Mobile Menu Button -->
+          <button @click="toggleMobileMenu" class="md:hidden p-2 rounded-md hover:bg-gray-100">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                d="M4 6h16M4 12h16M4 18h16"
               />
             </svg>
           </button>
         </div>
-
-        <!-- Mobile Search Button -->
-        <button @click="toggleMobileSearch" class="btn btn-square md:hidden">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </button>
       </div>
 
-      <!-- User Actions -->
-      <div class="flex gap-2 justify-end items-center">
-        <!-- Authenticated User -->
-        <template v-if="authStore.isAuthenticated">
-          <!-- Bookmarks -->
-          <RouterLink to="/bookmarks" class="btn btn-ghost btn-sm hidden sm:flex">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-              />
-            </svg>
-            <span class="hidden lg:inline">Favoris</span>
+      <!-- Mobile Menu -->
+      <div v-if="showMobileMenu" class="md:hidden border-t border-gray-200 py-4">
+        <nav class="flex flex-col gap-2">
+          <RouterLink
+            to="/"
+            class="text-gray-700 hover:text-gray-900 py-2 font-medium"
+            @click="showMobileMenu = false"
+          >
+            Accueil
           </RouterLink>
-
-          <!-- User Dropdown -->
-          <div class="dropdown dropdown-end">
-            <label tabindex="0" class="btn btn-ghost gap-2">
-              <div class="avatar">
-                <div class="w-6 h-6 rounded-full">
-                  <img
-                    :src="authStore.user?.avatar || '/default-avatar.png'"
-                    :alt="authStore.user?.username"
-                  />
-                </div>
-              </div>
-              <span class="hidden sm:inline">{{ authStore.user?.username }}</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </label>
-            <ul
-              tabindex="0"
-              class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50"
-            >
-              <li>
-                <RouterLink :to="`/profile/${authStore.user?.id}`" class="gap-2">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  Mon Profil
-                </RouterLink>
-              </li>
-              <li>
-                <RouterLink to="/bookmarks" class="gap-2 sm:hidden">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                    />
-                  </svg>
-                  Mes Favoris
-                </RouterLink>
-              </li>
-              <div class="divider my-1"></div>
-              <li>
-                <button @click="authStore.logout()" class="text-error gap-2">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
-                  </svg>
-                  Déconnexion
-                </button>
-              </li>
-            </ul>
-          </div>
-        </template>
-
-        <!-- Guest User -->
-        <template v-else>
-          <RouterLink to="/vst-gallery" class="btn btn-ghost btn-sm hidden sm:flex">
+          <RouterLink
+            to="/vst-gallery"
+            class="text-gray-700 hover:text-gray-900 py-2 font-medium"
+            @click="showMobileMenu = false"
+          >
             Galerie
           </RouterLink>
-          <RouterLink to="/login" class="btn btn-primary btn-sm"> Connexion </RouterLink>
-        </template>
-      </div>
-    </div>
-
-    <!-- Mobile Search Bar -->
-    <div v-if="showMobileSearch" class="md:hidden p-4 border-t border-base-300">
-      <div class="join w-full">
-        <input
-          v-model="searchQuery"
-          @keyup.enter="handleSearch"
-          type="text"
-          placeholder="Recherchez des plugins..."
-          class="input input-bordered join-item flex-1"
-          autofocus
-        />
-        <button @click="handleSearch" class="btn btn-primary join-item">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </button>
+          <RouterLink
+            v-if="authStore.isAuthenticated"
+            to="/explore"
+            class="text-gray-700 hover:text-gray-900 py-2 font-medium"
+            @click="showMobileMenu = false"
+          >
+            Explorer
+          </RouterLink>
+          <RouterLink
+            v-if="authStore.isAuthenticated"
+            to="/bookmarks"
+            class="text-gray-700 hover:text-gray-900 py-2 font-medium"
+            @click="showMobileMenu = false"
+          >
+            Favoris
+          </RouterLink>
+        </nav>
       </div>
     </div>
   </header>

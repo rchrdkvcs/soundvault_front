@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import AppLogo from '@/components/AppLogo.vue'
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import Button from '@/components/ui/Button.vue'
+import Input from '@/components/ui/Input.vue'
+import Card from '@/components/ui/Card.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -27,44 +29,85 @@ const handleSubmit = async (e: Event) => {
 </script>
 
 <template>
-  <main class="w-full h-full flex flex-col justify-center items-center gap-8">
-    <AppLogo />
+  <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+      <!-- Header -->
+      <div class="text-center">
+        <RouterLink to="/" class="flex items-center justify-center gap-2 mb-6">
+          <img
+            src="/src/assets/1203953.svg"
+            alt="SoundVault logo"
+            class="h-10 w-10"
+          />
+          <span class="text-2xl font-semibold text-gray-900">SoundVault</span>
+        </RouterLink>
+        <h2 class="text-3xl font-light text-gray-900">
+          Connectez-vous à votre compte
+        </h2>
+        <p class="mt-2 text-gray-600">
+          Ou
+          <RouterLink to="/register" class="text-blue-600 hover:text-blue-500 font-medium">
+            créez un nouveau compte
+          </RouterLink>
+        </p>
+      </div>
 
-    <form
-      @submit="handleSubmit"
-      class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4"
-    >
-      <h2 class="text-2xl font-semibold mb-4">Se connecter</h2>
+      <!-- Form -->
+      <Card>
+        <form @submit="handleSubmit" class="space-y-6">
+          <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p class="text-red-800 text-sm">{{ error }}</p>
+          </div>
 
-      <div v-if="error" class="alert alert-error mb-4">{{ error }}</div>
+          <Input
+            v-model="form.email"
+            type="email"
+            label="Adresse email"
+            placeholder="votre@email.com"
+            :full-width="true"
+            required
+          />
 
-      <label class="label">Email</label>
-      <input
-        v-model="form.email"
-        type="email"
-        class="input w-full"
-        placeholder="some@email.com"
-        required
-      />
+          <Input
+            v-model="form.password"
+            type="password"
+            label="Mot de passe"
+            placeholder="••••••••"
+            :full-width="true"
+            required
+          />
 
-      <label class="label">Mot de passe</label>
-      <input
-        v-model="form.password"
-        type="password"
-        class="input w-full"
-        placeholder="*********"
-        required
-      />
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label for="remember-me" class="ml-2 block text-sm text-gray-900">
+                Se souvenir de moi
+              </label>
+            </div>
 
-      <button type="submit" class="btn btn-neutral mt-4 w-full" :disabled="isLoading">
-        <span v-if="isLoading" class="loading loading-spinner loading-sm"></span>
-        Se connecter
-      </button>
+            <div class="text-sm">
+              <a href="#" class="text-blue-600 hover:text-blue-500">
+                Mot de passe oublié ?
+              </a>
+            </div>
+          </div>
 
-      <p class="text-center mt-4">
-        Pas encore inscrit ?
-        <RouterLink to="/register" class="link link-primary">S'inscrire</RouterLink>
-      </p>
-    </form>
-  </main>
+          <Button
+            type="submit"
+            :disabled="isLoading"
+            :full-width="true"
+            size="lg"
+          >
+            <span v-if="isLoading" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+            Se connecter
+          </Button>
+        </form>
+      </Card>
+    </div>
+  </div>
 </template>

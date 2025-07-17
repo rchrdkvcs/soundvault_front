@@ -47,7 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
       const res = await get<User>('/auth/me')
       user.value = res
       isAuthenticated.value = true
-    } catch (e) {
+    } catch {
       logout()
     }
   }

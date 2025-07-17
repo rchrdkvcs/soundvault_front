@@ -4,6 +4,7 @@ export interface VST {
   description: string
   version: string
   price: number
+  salePrice?: number
   category: VSTCategory
   tags: string[]
   author: {
@@ -11,21 +12,25 @@ export interface VST {
     username: string
     avatar?: string
   }
+  image?: string
   images: string[]
   downloadUrl?: string
   demoUrl?: string
-  fileSize: number
-  requirements: {
+  fileSize?: number
+  requirements?: {
     os: string[]
     vstVersion: string[]
     memory: string
     disk: string
   }
-  ratings: {
+  rating?: number
+  ratings?: {
     average: number
     count: number
   }
-  downloads: number
+  ratingCount?: number
+  downloads?: number
+  downloadCount?: number
   isBookmarked?: boolean
   isFree: boolean
   createdAt: string
