@@ -28,6 +28,9 @@ RUN bun run build
 FROM base
 WORKDIR /app
 
+# Install serve globally in production stage
+RUN npm install -g serve
+
 COPY --from=production-deps /app/node_modules /app/node_modules
 COPY --from=build /app/dist /app/dist
 
