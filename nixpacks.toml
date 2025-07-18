@@ -4,8 +4,11 @@ NODE_VERSION = "22"
 [phases.setup]
 nixPkgs = ["nodejs_22", "npm"]
 
-[phases.build]
-cmds = ["npm install", "npm run build"]
+[phases.install]
+cmds = ["npm install"]
 
-[phases.start]
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
 cmd = "npx serve -s dist -l $PORT"
