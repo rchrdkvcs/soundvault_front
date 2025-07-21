@@ -19,24 +19,25 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   fullWidth: false,
   size: 'md',
-  variant: 'default'
+  variant: 'default',
 })
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
-const baseClasses = 'border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+const baseClasses =
+  'bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
 
 const sizeClasses = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg'
+  sm: 'px-2 py-1.5 text-sm',
+  md: 'px-3 py-2 text-base',
+  lg: 'px-4 py-3 text-lg',
 }
 
 const variantClasses = {
-  default: 'rounded-md',
-  rounded: 'rounded-full'
+  default: 'rounded-xl',
+  rounded: 'rounded-full',
 }
 
 const inputClasses = computed(() => [
@@ -44,7 +45,7 @@ const inputClasses = computed(() => [
   sizeClasses[props.size],
   variantClasses[props.variant],
   props.fullWidth ? 'w-full' : '',
-  props.error ? 'border-red-500 focus:ring-red-500' : ''
+  props.error ? 'border-red-500 focus:ring-red-500' : '',
 ])
 </script>
 
