@@ -8,7 +8,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   cols: '3',
   gap: '6',
-  responsive: true
+  responsive: true,
 })
 
 const baseClasses = 'grid'
@@ -20,7 +20,7 @@ const colsClasses = {
   '4': 'grid-cols-4',
   '5': 'grid-cols-5',
   '6': 'grid-cols-6',
-  '12': 'grid-cols-12'
+  '12': 'grid-cols-12',
 }
 
 const gapClasses = {
@@ -28,7 +28,7 @@ const gapClasses = {
   '4': 'gap-4',
   '6': 'gap-6',
   '8': 'gap-8',
-  '12': 'gap-12'
+  '12': 'gap-12',
 }
 
 const responsiveClasses = props.responsive ? 'grid-cols-1 md:grid-cols-2 lg:' : ''

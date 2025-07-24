@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useBookmarksStore } from '@/stores/bookmarks'
+import { useApi } from '@/composables/useApi'
 import type { VST } from '@/types/vst'
 import Container from '@/components/ui/Container.vue'
 import Grid from '@/components/ui/Grid.vue'
@@ -9,94 +11,33 @@ import Input from '@/components/ui/Input.vue'
 import VSTCard from '@/components/features/vst/VSTCard.vue'
 
 const router = useRouter()
+const bookmarksStore = useBookmarksStore()
+const { get } = useApi()
 
-const bookmarks = ref<VST[]>([])
+const bookmarkedVsts = ref<VST[]>([])
 const loading = ref(true)
 const sortBy = ref<'newest' | 'oldest' | 'name' | 'price'>('newest')
 const filterCategory = ref('')
 const searchQuery = ref('')
 
-const categories = [
-  { id: 'synth', name: 'Synthétiseurs' },
-  { id: 'effects', name: 'Effets' },
-  { id: 'drums', name: 'Drums' },
-  { id: 'samples', name: 'Samples' },
-  { id: 'utility', name: 'Utilitaires' }
-]
-
-const mockBookmarks: VST[] = [
-  {
-    id: '1',
-    name: 'Serum Pro',
-    description: 'Synthétiseur wavetable avancé avec des capacités de modulation infinies',
-    version: '2.1.0',
-    price: 199,
-    category: { id: 'synth', name: 'Synthétiseurs', slug: 'synth' },
-    tags: ['wavetable', 'synth', 'modulation'],
-    author: { id: 'xfer', username: 'Xfer Records', avatar: '/avatars/xfer.png' },
-    image: '/vst-images/serum.jpg',
-    images: ['/vst-images/serum-1.jpg'],
-    downloadCount: 45000,
-    rating: 4.8,
-    ratingCount: 1250,
-    createdAt: '2024-01-20T10:30:00Z',
-    updatedAt: '2024-01-20T10:30:00Z',
-    isFree: false
-  },
-  {
-    id: '2',
-    name: 'Vital Synth',
-    description: 'Synthétiseur wavetable moderne et gratuit avec interface intuitive',
-    version: '1.5.5',
-    price: 0,
-    category: { id: 'synth', name: 'Synthétiseurs', slug: 'synth' },
-    tags: ['wavetable', 'free', 'modern'],
-    author: { id: 'matt', username: 'Matt Tytel', avatar: '/avatars/matt.png' },
-    image: '/vst-images/vital.jpg',
-    images: ['/vst-images/vital-1.jpg'],
-    downloadCount: 85000,
-    rating: 4.6,
-    ratingCount: 890,
-    createdAt: '2024-01-15T09:00:00Z',
-    updatedAt: '2024-01-15T09:00:00Z',
-    isFree: true
-  },
-  {
-    id: '3',
-    name: 'FabFilter Pro-Q 3',
-    description: 'Égaliseur professionnel avec analyse spectrale en temps réel',
-    version: '3.24',
-    price: 179,
-    salePrice: 119,
-    category: { id: 'effects', name: 'Effets', slug: 'effects' },
-    tags: ['eq', 'mastering', 'professional'],
-    author: { id: 'fabfilter', username: 'FabFilter', avatar: '/avatars/fabfilter.png' },
-    image: '/vst-images/proq3.jpg',
-    images: ['/vst-images/proq3-1.jpg'],
-    downloadCount: 32000,
-    rating: 4.9,
-    ratingCount: 567,
-    createdAt: '2024-01-10T11:00:00Z',
-    updatedAt: '2024-01-10T11:00:00Z',
-    isFree: false
-  }
-]
+const categories = ref<any[]>([])
 
 const filteredBookmarks = computed(() => {
-  let filtered = [...bookmarks.value]
+  let filtered = [...bookmarkedVsts.value]
 
   // Filter by search
   if (searchQuery.value) {
-    filtered = filtered.filter(vst => 
-      vst.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      vst.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      vst.tags.some(tag => tag.toLowerCase().includes(searchQuery.value.toLowerCase()))
+    filtered = filtered.filter(
+      (vst) =>
+        vst.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        vst.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        vst.tags.some((tag) => tag.toLowerCase().includes(searchQuery.value.toLowerCase())),
     )
   }
 
   // Filter by category
   if (filterCategory.value) {
-    filtered = filtered.filter(vst => vst.category.id === filterCategory.value)
+    filtered = filtered.filter((vst) => vst.category.id === filterCategory.value)
   }
 
   // Sort
@@ -119,19 +60,54 @@ const filteredBookmarks = computed(() => {
 })
 
 const removeBookmark = (vstId: string) => {
-  bookmarks.value = bookmarks.value.filter(vst => vst.id !== vstId)
+  bookmarksStore.removeBookmark(vstId)
+  // Remove from local array too
+  bookmarkedVsts.value = bookmarkedVsts.value.filter((vst) => vst.id !== vstId)
 }
 
 const clearAllBookmarks = () => {
-  bookmarks.value = []
+  bookmarksStore.clearBookmarks()
+  bookmarkedVsts.value = []
 }
 
-onMounted(() => {
-  // Simulate loading
-  setTimeout(() => {
-    bookmarks.value = mockBookmarks
+// Fetch VST details for bookmarked IDs
+const fetchBookmarkedVsts = async () => {
+  loading.value = true
+  try {
+    const bookmarkedIds = bookmarksStore.bookmarkedVsts
+    if (bookmarkedIds.length === 0) {
+      bookmarkedVsts.value = []
+      return
+    }
+
+    // Fetch details for each bookmarked VST
+    const vstPromises = bookmarkedIds.map((id) => get<any>(`/plugins/${id}`))
+    const responses = await Promise.allSettled(vstPromises)
+
+    bookmarkedVsts.value = responses
+      .filter((result) => result.status === 'fulfilled' && (result.value as any).success)
+      .map((result) => ((result as any).value as any).data)
+  } catch (error) {
+    console.error('Erreur lors du chargement des favoris:', error)
+  } finally {
     loading.value = false
-  }, 1000)
+  }
+}
+
+// Fetch categories for filtering
+const fetchCategories = async () => {
+  try {
+    const response = await get<any>('/categories')
+    if (response.success) {
+      categories.value = response.data
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des catégories:', error)
+  }
+}
+
+onMounted(async () => {
+  await Promise.all([fetchCategories(), fetchBookmarkedVsts()])
 })
 </script>
 
@@ -161,7 +137,7 @@ onMounted(() => {
 
             <!-- Category Filter -->
             <div class="lg:w-48">
-              <select 
+              <select
                 v-model="filterCategory"
                 class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -174,7 +150,7 @@ onMounted(() => {
 
             <!-- Sort -->
             <div class="lg:w-48">
-              <select 
+              <select
                 v-model="sortBy"
                 class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -189,14 +165,12 @@ onMounted(() => {
           <!-- Actions -->
           <div class="flex items-center justify-between">
             <p class="text-sm text-gray-600">
-              {{ filteredBookmarks.length }} plugin{{ filteredBookmarks.length > 1 ? 's' : '' }} favori{{ filteredBookmarks.length > 1 ? 's' : '' }}
+              {{ filteredBookmarks.length }} plugin{{
+                filteredBookmarks.length > 1 ? 's' : ''
+              }}
+              favori{{ filteredBookmarks.length > 1 ? 's' : '' }}
             </p>
-            <Button 
-              v-if="bookmarks.length > 0" 
-              variant="ghost" 
-              @click="clearAllBookmarks"
-              class="cursor-pointer"
-            >
+            <Button v-if="bookmarkedVsts.length > 0" variant="ghost" @click="clearAllBookmarks">
               Tout supprimer
             </Button>
           </div>
@@ -204,24 +178,55 @@ onMounted(() => {
 
         <!-- Content -->
         <div v-if="loading" class="text-center py-12">
-          <div class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div
+            class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"
+          ></div>
           <p class="mt-4 text-gray-600">Chargement de vos favoris...</p>
         </div>
 
-        <div v-else-if="bookmarks.length === 0" class="text-center py-12">
-          <div class="text-6xl mb-4">💔</div>
+        <div v-else-if="bookmarkedVsts.length === 0" class="text-center py-12">
+          <svg
+            class="w-16 h-16 mx-auto mb-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            />
+          </svg>
           <h3 class="text-2xl font-light text-gray-900 mb-2">Aucun favori</h3>
           <p class="text-gray-600 mb-6">Vous n'avez pas encore ajouté de plugins à vos favoris</p>
-          <Button @click="router.push('/vst-gallery')" class="cursor-pointer">
-            Découvrir des plugins
-          </Button>
+          <Button @click="router.push('/explore')"> Découvrir des plugins </Button>
         </div>
 
         <div v-else-if="filteredBookmarks.length === 0" class="text-center py-12">
-          <div class="text-6xl mb-4">🔍</div>
+          <svg
+            class="w-16 h-16 mx-auto mb-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
           <h3 class="text-2xl font-light text-gray-900 mb-2">Aucun résultat</h3>
           <p class="text-gray-600 mb-6">Aucun favori ne correspond à vos critères de recherche</p>
-          <Button @click="searchQuery = ''; filterCategory = ''" class="cursor-pointer">
+          <Button
+            @click="
+              () => {
+                searchQuery = ''
+                filterCategory = ''
+              }
+            "
+          >
             Effacer les filtres
           </Button>
         </div>
@@ -230,7 +235,7 @@ onMounted(() => {
           <Grid cols="3" gap="6">
             <div v-for="vst in filteredBookmarks" :key="vst.id" class="relative">
               <VSTCard :vst="vst" />
-              
+
               <!-- Remove button -->
               <button
                 @click="removeBookmark(vst.id)"
@@ -238,7 +243,12 @@ onMounted(() => {
                 title="Retirer des favoris"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>

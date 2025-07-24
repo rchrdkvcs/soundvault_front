@@ -35,43 +35,68 @@ const handleSubmit = async (e: Event) => {
       <div class="flex flex-col justify-center items-center w-full p-16">
         <!-- Logo -->
         <div class="mb-12">
-          <img
-            src="/src/assets/images/logo-256.png"
-            alt="SoundVault"
-            class="w-20 h-20 mx-auto"
-          />
+          <img src="/src/assets/images/logo-256.png" alt="SoundVault" class="w-20 h-20 mx-auto" />
         </div>
-        
+
         <!-- Illustration Area -->
         <div class="max-w-md mx-auto text-center">
           <div class="relative mb-8">
             <!-- Abstract music visualization -->
             <div class="flex items-end justify-center gap-2 h-32 mb-8">
-              <div class="w-2 bg-blue-100 rounded-full animate-pulse" style="height: 25%; animation-delay: 0s; animation-duration: 2s;"></div>
-              <div class="w-2 bg-blue-200 rounded-full animate-pulse" style="height: 60%; animation-delay: 0.2s; animation-duration: 2s;"></div>
-              <div class="w-2 bg-blue-300 rounded-full animate-pulse" style="height: 40%; animation-delay: 0.4s; animation-duration: 2s;"></div>
-              <div class="w-2 bg-blue-400 rounded-full animate-pulse" style="height: 85%; animation-delay: 0.6s; animation-duration: 2s;"></div>
-              <div class="w-2 bg-blue-500 rounded-full animate-pulse" style="height: 70%; animation-delay: 0.8s; animation-duration: 2s;"></div>
-              <div class="w-2 bg-blue-400 rounded-full animate-pulse" style="height: 50%; animation-delay: 1s; animation-duration: 2s;"></div>
-              <div class="w-2 bg-blue-300 rounded-full animate-pulse" style="height: 90%; animation-delay: 1.2s; animation-duration: 2s;"></div>
-              <div class="w-2 bg-blue-200 rounded-full animate-pulse" style="height: 35%; animation-delay: 1.4s; animation-duration: 2s;"></div>
-              <div class="w-2 bg-blue-100 rounded-full animate-pulse" style="height: 45%; animation-delay: 1.6s; animation-duration: 2s;"></div>
+              <div
+                class="w-2 bg-blue-100 rounded-full animate-pulse"
+                style="height: 25%; animation-delay: 0s; animation-duration: 2s"
+              ></div>
+              <div
+                class="w-2 bg-blue-200 rounded-full animate-pulse"
+                style="height: 60%; animation-delay: 0.2s; animation-duration: 2s"
+              ></div>
+              <div
+                class="w-2 bg-blue-300 rounded-full animate-pulse"
+                style="height: 40%; animation-delay: 0.4s; animation-duration: 2s"
+              ></div>
+              <div
+                class="w-2 bg-blue-400 rounded-full animate-pulse"
+                style="height: 85%; animation-delay: 0.6s; animation-duration: 2s"
+              ></div>
+              <div
+                class="w-2 bg-blue-500 rounded-full animate-pulse"
+                style="height: 70%; animation-delay: 0.8s; animation-duration: 2s"
+              ></div>
+              <div
+                class="w-2 bg-blue-400 rounded-full animate-pulse"
+                style="height: 50%; animation-delay: 1s; animation-duration: 2s"
+              ></div>
+              <div
+                class="w-2 bg-blue-300 rounded-full animate-pulse"
+                style="height: 90%; animation-delay: 1.2s; animation-duration: 2s"
+              ></div>
+              <div
+                class="w-2 bg-blue-200 rounded-full animate-pulse"
+                style="height: 35%; animation-delay: 1.4s; animation-duration: 2s"
+              ></div>
+              <div
+                class="w-2 bg-blue-100 rounded-full animate-pulse"
+                style="height: 45%; animation-delay: 1.6s; animation-duration: 2s"
+              ></div>
             </div>
           </div>
-          
+
           <h2 class="text-2xl font-semibold text-gray-900 mb-4">
             Votre univers musical vous attend
           </h2>
           <p class="text-gray-600 leading-relaxed">
-            Découvrez, organisez et partagez votre musique avec SoundVault. 
-            Une expérience simple et élégante pour tous vos morceaux préférés.
+            Découvrez, organisez et partagez votre musique avec SoundVault. Une expérience simple et
+            élégante pour tous vos morceaux préférés.
           </p>
         </div>
       </div>
     </div>
 
     <!-- Right Side - Login Form -->
-    <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 max-w-md lg:max-w-none mx-auto lg:mx-0">
+    <div
+      class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 max-w-md lg:max-w-none mx-auto lg:mx-0"
+    >
       <div class="mx-auto w-full max-w-sm lg:max-w-md">
         <!-- Mobile Logo -->
         <div class="lg:hidden text-center mb-8">
@@ -148,7 +173,10 @@ const handleSubmit = async (e: Event) => {
             size="lg"
             variant="primary"
           >
-            <span v-if="isLoading" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+            <span
+              v-if="isLoading"
+              class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"
+            ></span>
             Se connecter
           </Button>
         </form>

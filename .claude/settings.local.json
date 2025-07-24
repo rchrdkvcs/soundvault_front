@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(node ace make:migration:*)",
+      "Bash(node ace migration:run:*)",
+      "Bash(node ace make:*)",
+      "Bash(node ace:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)"
+    ],
+    "deny": []
+  }
+}

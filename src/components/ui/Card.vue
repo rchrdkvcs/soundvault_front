@@ -10,7 +10,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   hover: false,
   border: true,
-  padding: 'md'
+  padding: 'md',
 })
 
 const baseClasses = 'bg-white rounded-2xl transition-all duration-200'
@@ -18,14 +18,14 @@ const baseClasses = 'bg-white rounded-2xl transition-all duration-200'
 const paddingClasses = {
   sm: 'p-4',
   md: 'p-6',
-  lg: 'p-8'
+  lg: 'p-8',
 }
 
 const cardClasses = computed(() => [
   baseClasses,
   paddingClasses[props.padding],
   props.border ? 'border border-gray-200' : '',
-  props.hover ? 'hover:border-gray-300' : ''
+  props.hover ? 'hover:border-gray-300' : '',
 ])
 </script>
 

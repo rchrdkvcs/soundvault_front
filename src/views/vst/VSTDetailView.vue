@@ -1,89 +1,67 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useApi } from '@/composables/useApi'
+import { useAuthStore } from '@/stores/auth'
 import type { VST, VSTReview } from '@/types/vst'
 import Container from '@/components/ui/Container.vue'
 import Card from '@/components/ui/Card.vue'
 import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
 
+const route = useRoute()
+const router = useRouter()
+const { get } = useApi()
+const authStore = useAuthStore()
 
 const vst = ref<VST | null>(null)
-const reviews = ref<VSTReview[]>([])
 const loading = ref(true)
+const error = ref('')
 const currentImageIndex = ref(0)
 const showFullDescription = ref(false)
 
+const reviews = ref<VSTReview[]>([])
 const newReview = ref({
   rating: 5,
-  comment: ''
+  comment: '',
 })
 
-const mockVST: VST = {
-  id: '1',
-  name: 'Serum Pro',
-  description: 'Serum Pro est un synthétiseur wavetable révolutionnaire qui redéfinit les possibilités de la synthèse moderne. Avec ses capacités de modulation infinies, ses filtres de haute qualité et son interface utilisateur intuitive, Serum Pro est devenu l\'outil de choix pour les producteurs du monde entier.\n\nCaractéristiques principales :\n• Synthèse wavetable avancée avec plus de 450 presets\n• Oscillateurs haute qualité avec anti-aliasing\n• Filtres multimode avec distorsion intégrée\n• Matrix de modulation flexible\n• Effets intégrés de qualité studio\n• Interface utilisateur moderne et responsive',
-  version: '2.1.0',
-  price: 199,
-  salePrice: 149,
-  category: { id: 'synth', name: 'Synthétiseurs', slug: 'synth' },
-  tags: ['wavetable', 'synth', 'modulation', 'edm', 'professional'],
-  author: { 
-    id: 'xfer', 
-    username: 'Xfer Records',
-    avatar: '/avatars/xfer.png'
-  },
-  image: '/vst-images/serum-1.jpg',
-  images: [
-    '/vst-images/serum-1.jpg',
-    '/vst-images/serum-2.jpg',
-    '/vst-images/serum-3.jpg'
-  ],
-  downloadUrl: '/downloads/serum-pro-2.1.0.zip',
-  demoUrl: '/demos/serum-demo.mp3',
-  fileSize: 45 * 1024 * 1024,
-  requirements: {
-    os: ['Windows 10/11', 'macOS 10.15+'],
-    vstVersion: ['VST3', 'AU', 'AAX'],
-    memory: '4GB RAM minimum, 8GB recommandé',
-    disk: '500MB d\'espace libre'
-  },
-  rating: 4.8,
-  ratingCount: 1250,
-  downloadCount: 45000,
-  isBookmarked: false,
-  isFree: false,
-  createdAt: '2023-01-15T10:00:00Z',
-  updatedAt: '2023-12-10T14:30:00Z'
+const isOnSale = computed(() => {
+  return vst.value?.salePrice && vst.value.salePrice < vst.value.price
+})
+
+const fetchVST = async () => {
+  loading.value = true
+  error.value = ''
+
+  try {
+    const response = await get<any>(`/plugins/${route.params.id}`)
+
+    if (response.success) {
+      vst.value = response.data
+    } else {
+      error.value = 'Plugin introuvable'
+    }
+  } catch (e: any) {
+    error.value = e.message || 'Erreur lors du chargement du plugin'
+  } finally {
+    loading.value = false
+  }
 }
 
-const mockReviews: VSTReview[] = [
-  {
-    id: '1',
-    vstId: '1',
-    userId: 'user1',
-    user: {
-      username: 'ProducerMax',
-      avatar: '/avatars/producer.jpg'
-    },
-    rating: 5,
-    comment: 'Incroyable synthétiseur ! Les possibilités sont infinies. J\'utilise Serum depuis des années et cette version Pro est encore meilleure.',
-    createdAt: '2023-12-01T14:30:00Z'
-  },
-  {
-    id: '2',
-    vstId: '1',
-    userId: 'user2',
-    user: {
-      username: 'BeatMaker',
-      avatar: '/avatars/beatmaker.jpg'
-    },
-    rating: 4,
-    comment: 'Très bon plugin, interface intuitive et son de qualité. Le seul bémol est la consommation CPU qui peut être importante.',
-    createdAt: '2023-11-28T09:15:00Z'
+const downloadVST = async () => {
+  if (!authStore.isAuthenticated) {
+    router.push('/login')
+    return
   }
-]
 
-const isOnSale = ref(false)
+  try {
+    // Create download link
+    window.open(`${import.meta.env.VITE_API_URL}/plugins/${vst.value?.id}/download`, '_blank')
+  } catch (error) {
+    console.error('Erreur lors du téléchargement:', error)
+  }
+}
 
 const formatPrice = (price: number) => {
   return price === 0 ? 'Gratuit' : `${price}€`
@@ -98,7 +76,7 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   })
 }
 
@@ -136,13 +114,13 @@ const addReview = () => {
       userId: 'current-user',
       user: {
         username: 'Vous',
-        avatar: '/avatars/default.png'
+        avatar: '/avatars/default.png',
       },
       rating: newReview.value.rating,
       comment: newReview.value.comment,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     }
-    
+
     reviews.value.unshift(review)
     newReview.value.comment = ''
     newReview.value.rating = 5
@@ -150,12 +128,7 @@ const addReview = () => {
 }
 
 onMounted(() => {
-  setTimeout(() => {
-    vst.value = mockVST
-    reviews.value = mockReviews
-    isOnSale.value = mockVST.salePrice !== undefined && mockVST.salePrice < mockVST.price
-    loading.value = false
-  }, 1000)
+  fetchVST()
 })
 </script>
 
@@ -164,7 +137,9 @@ onMounted(() => {
     <Container>
       <div class="py-8">
         <div v-if="loading" class="text-center py-12">
-          <div class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div
+            class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"
+          ></div>
           <p class="mt-4 text-gray-600">Chargement...</p>
         </div>
 
@@ -181,7 +156,10 @@ onMounted(() => {
             <span>›</span>
             <RouterLink to="/vst-gallery" class="hover:text-gray-900">Galerie</RouterLink>
             <span>›</span>
-            <RouterLink :to="`/vst-gallery?category=${vst.category.id}`" class="hover:text-gray-900">
+            <RouterLink
+              :to="`/vst-gallery?category=${vst.category.id}`"
+              class="hover:text-gray-900"
+            >
               {{ vst.category.name }}
             </RouterLink>
             <span>›</span>
@@ -202,7 +180,7 @@ onMounted(() => {
                       class="w-full h-full object-cover"
                     />
                   </div>
-                  
+
                   <!-- Image Navigation -->
                   <button
                     v-if="currentImageIndex > 0"
@@ -210,17 +188,27 @@ onMounted(() => {
                     class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 transition-colors"
                   >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 19l-7-7 7-7"
+                      />
                     </svg>
                   </button>
-                  
+
                   <button
                     v-if="currentImageIndex < vst.images.length - 1"
                     @click="nextImage"
                     class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 transition-colors"
                   >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </button>
 
@@ -232,7 +220,7 @@ onMounted(() => {
                       @click="currentImageIndex = index"
                       :class="[
                         'w-2 h-2 rounded-full transition-colors',
-                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                        index === currentImageIndex ? 'bg-white' : 'bg-white/50',
                       ]"
                     />
                   </div>
@@ -245,10 +233,14 @@ onMounted(() => {
                   <h2 class="text-xl font-semibold text-gray-900">Description</h2>
                   <div class="prose prose-gray max-w-none">
                     <div v-if="showFullDescription || vst.description.length <= 300">
-                      <p class="whitespace-pre-line text-gray-700 leading-relaxed">{{ vst.description }}</p>
+                      <p class="whitespace-pre-line text-gray-700 leading-relaxed">
+                        {{ vst.description }}
+                      </p>
                     </div>
                     <div v-else>
-                      <p class="text-gray-700 leading-relaxed">{{ vst.description.substring(0, 300) }}...</p>
+                      <p class="text-gray-700 leading-relaxed">
+                        {{ vst.description.substring(0, 300) }}...
+                      </p>
                       <button
                         @click="showFullDescription = true"
                         class="text-blue-600 hover:text-blue-500 font-medium mt-2"
@@ -274,7 +266,9 @@ onMounted(() => {
                     <div>
                       <h3 class="font-medium text-gray-900 mb-2">Formats</h3>
                       <ul class="space-y-1 text-gray-600">
-                        <li v-for="format in vst.requirements?.vstVersion" :key="format">{{ format }}</li>
+                        <li v-for="format in vst.requirements?.vstVersion" :key="format">
+                          {{ format }}
+                        </li>
                       </ul>
                     </div>
                     <div>
@@ -309,11 +303,15 @@ onMounted(() => {
                       @click="toggleBookmark"
                       :class="[
                         'p-2 rounded-full transition-colors',
-                        vst.isBookmarked ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-600'
+                        vst.isBookmarked
+                          ? 'text-red-500 hover:text-red-600'
+                          : 'text-gray-400 hover:text-gray-600',
                       ]"
                     >
                       <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        <path
+                          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -323,7 +321,9 @@ onMounted(() => {
                     <div class="flex text-yellow-400">
                       <span class="text-lg">{{ renderStars(Math.round(vst.rating || 0)) }}</span>
                     </div>
-                    <span class="text-sm text-gray-600">{{ vst.rating }} ({{ vst.ratingCount }} avis)</span>
+                    <span class="text-sm text-gray-600"
+                      >{{ vst.rating }} ({{ vst.ratingCount }} avis)</span
+                    >
                   </div>
 
                   <!-- Price -->
@@ -344,14 +344,34 @@ onMounted(() => {
                   <!-- Actions -->
                   <div class="space-y-3">
                     <Button :full-width="true" size="lg">
-                      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6m0 0L3 3m4 10h10"/>
+                      <svg
+                        class="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6m0 0L3 3m4 10h10"
+                        />
                       </svg>
                       Acheter maintenant
                     </Button>
                     <Button variant="outline" :full-width="true">
-                      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                      <svg
+                        class="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
                       </svg>
                       Télécharger démo
                     </Button>
@@ -401,9 +421,7 @@ onMounted(() => {
           <!-- Reviews Section -->
           <Card>
             <div class="space-y-6">
-              <h2 class="text-xl font-semibold text-gray-900">
-                Avis ({{ reviews.length }})
-              </h2>
+              <h2 class="text-xl font-semibold text-gray-900">Avis ({{ reviews.length }})</h2>
 
               <!-- Add Review -->
               <div class="border-t pt-6">
@@ -418,7 +436,7 @@ onMounted(() => {
                         @click="newReview.rating = rating"
                         :class="[
                           'text-2xl transition-colors',
-                          rating <= newReview.rating ? 'text-yellow-400' : 'text-gray-300'
+                          rating <= newReview.rating ? 'text-yellow-400' : 'text-gray-300',
                         ]"
                       >
                         ★

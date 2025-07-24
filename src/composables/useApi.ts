@@ -12,7 +12,11 @@ interface ApiError {
 
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers)
-  headers.set('Content-Type', 'application/json')
+
+  // Ne pas définir Content-Type si c'est FormData (le navigateur le fait automatiquement)
+  if (!(options.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json')
+  }
 
   const token = getToken()
   if (token) {
@@ -74,7 +78,7 @@ export function useApi() {
       request<T>(url, {
         ...options,
         method: 'POST',
-        body: data ? JSON.stringify(data) : undefined,
+        body: data instanceof FormData ? data : data ? JSON.stringify(data) : undefined,
       }),
 
     put: <T>(url: string, data?: any, options?: Omit<RequestInit, 'method' | 'body'>) =>

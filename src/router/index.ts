@@ -4,8 +4,8 @@ import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import ExploreView from '@/views/explore/ExploreView.vue'
-import VSTGalleryView from '@/views/vst/VSTGalleryView.vue'
 import VSTDetailView from '@/views/vst/VSTDetailView.vue'
+import PublishVSTView from '@/views/vst/PublishVSTView.vue'
 import ProfileView from '@/views/profile/ProfileView.vue'
 import BookmarksView from '@/views/profile/BookmarksView.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -43,19 +43,23 @@ const router = createRouter({
           path: 'explore',
           name: 'explore',
           component: ExploreView,
-          meta: {
-            requiresAuth: true,
-          },
         },
         {
           path: 'vst-gallery',
-          name: 'vst-gallery',
-          component: VSTGalleryView,
+          redirect: '/explore',
         },
         {
           path: 'vst/:id',
           name: 'vst-detail',
           component: VSTDetailView,
+        },
+        {
+          path: 'publish',
+          name: 'publish-vst',
+          component: PublishVSTView,
+          meta: {
+            requiresAuth: true,
+          },
         },
         {
           path: 'profile/:id',

@@ -56,52 +56,68 @@ const handleSubmit = async (e: Event) => {
       <div class="flex flex-col justify-center items-center w-full p-16">
         <!-- Logo -->
         <div class="mb-12">
-          <img
-            src="/src/assets/images/logo-256.png"
-            alt="SoundVault"
-            class="w-20 h-20 mx-auto"
-          />
+          <img src="/src/assets/images/logo-256.png" alt="SoundVault" class="w-20 h-20 mx-auto" />
         </div>
-        
+
         <!-- Illustration Area -->
         <div class="max-w-md mx-auto text-center">
           <div class="relative mb-8">
             <!-- Abstract music circles -->
             <div class="relative w-48 h-48 mx-auto mb-8">
               <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-32 h-32 bg-gradient-to-br from-green-100 to-green-200 rounded-full opacity-60 animate-pulse" style="animation-duration: 3s;"></div>
+                <div
+                  class="w-32 h-32 bg-gradient-to-br from-green-100 to-green-200 rounded-full opacity-60 animate-pulse"
+                  style="animation-duration: 3s"
+                ></div>
               </div>
               <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-24 h-24 bg-gradient-to-br from-green-200 to-green-300 rounded-full opacity-80 animate-pulse" style="animation-duration: 2.5s; animation-delay: 0.5s;"></div>
+                <div
+                  class="w-24 h-24 bg-gradient-to-br from-green-200 to-green-300 rounded-full opacity-80 animate-pulse"
+                  style="animation-duration: 2.5s; animation-delay: 0.5s"
+                ></div>
               </div>
               <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-16 h-16 bg-gradient-to-br from-green-300 to-green-400 rounded-full animate-pulse" style="animation-duration: 2s; animation-delay: 1s;"></div>
+                <div
+                  class="w-16 h-16 bg-gradient-to-br from-green-300 to-green-400 rounded-full animate-pulse"
+                  style="animation-duration: 2s; animation-delay: 1s"
+                ></div>
               </div>
               <div class="absolute top-8 right-8">
-                <div class="w-4 h-4 bg-green-500 rounded-full animate-bounce" style="animation-delay: 0.3s;"></div>
+                <div
+                  class="w-4 h-4 bg-green-500 rounded-full animate-bounce"
+                  style="animation-delay: 0.3s"
+                ></div>
               </div>
               <div class="absolute bottom-8 left-8">
-                <div class="w-3 h-3 bg-green-400 rounded-full animate-bounce" style="animation-delay: 0.6s;"></div>
+                <div
+                  class="w-3 h-3 bg-green-400 rounded-full animate-bounce"
+                  style="animation-delay: 0.6s"
+                ></div>
               </div>
               <div class="absolute top-16 left-12">
-                <div class="w-2 h-2 bg-green-600 rounded-full animate-bounce" style="animation-delay: 0.9s;"></div>
+                <div
+                  class="w-2 h-2 bg-green-600 rounded-full animate-bounce"
+                  style="animation-delay: 0.9s"
+                ></div>
               </div>
             </div>
           </div>
-          
+
           <h2 class="text-2xl font-semibold text-gray-900 mb-4">
             Commencez votre aventure musicale
           </h2>
           <p class="text-gray-600 leading-relaxed">
-            Rejoignez SoundVault et accédez à un univers de possibilités musicales. 
-            Simple, élégant, et conçu pour les passionnés de musique.
+            Rejoignez SoundVault et accédez à un univers de possibilités musicales. Simple, élégant,
+            et conçu pour les passionnés de musique.
           </p>
         </div>
       </div>
     </div>
 
     <!-- Right Side - Register Form -->
-    <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 max-w-md lg:max-w-none mx-auto lg:mx-0">
+    <div
+      class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 max-w-md lg:max-w-none mx-auto lg:mx-0"
+    >
       <div class="mx-auto w-full max-w-sm lg:max-w-md">
         <!-- Mobile Logo -->
         <div class="lg:hidden text-center mb-8">
@@ -124,7 +140,10 @@ const handleSubmit = async (e: Event) => {
 
         <form @submit="handleSubmit" class="space-y-5">
           <!-- Error Message -->
-          <div v-if="error || validationError" class="rounded-md bg-red-50 p-4 border border-red-200">
+          <div
+            v-if="error || validationError"
+            class="rounded-md bg-red-50 p-4 border border-red-200"
+          >
             <p class="text-sm text-red-800">{{ validationError || error }}</p>
           </div>
 
@@ -205,7 +224,10 @@ const handleSubmit = async (e: Event) => {
             variant="secondary"
             class="!bg-green-600 hover:!bg-green-700 focus:!ring-green-500"
           >
-            <span v-if="isLoading" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+            <span
+              v-if="isLoading"
+              class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"
+            ></span>
             Créer mon compte
           </Button>
         </form>

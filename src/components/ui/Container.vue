@@ -4,7 +4,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  size: 'lg'
+  size: 'lg',
 })
 
 const sizeClasses = {
@@ -12,7 +12,7 @@ const sizeClasses = {
   md: 'max-w-5xl',
   lg: 'max-w-7xl',
   xl: 'max-w-screen-2xl',
-  full: 'max-w-full'
+  full: 'max-w-full',
 }
 
 const containerClasses = `${sizeClasses[props.size]} mx-auto px-4 sm:px-6 lg:px-8`

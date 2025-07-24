@@ -1,14 +1,29 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import Button from '@/components/ui/Button.vue'
 
 const router = useRouter()
 const searchQuery = ref('')
 
-const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    router.push({ name: 'vst-gallery', query: { search: searchQuery.value } })
+const navigateToCategory = (categoryName: string) => {
+  const categoryMap: { [key: string]: string } = {
+    Synthétiseurs: 'synth',
+    Effets: 'effects',
+    Drums: 'drums',
+    Samples: 'samples',
+    Instruments: 'instruments',
+    Mixage: 'mixing',
   }
+
+  const categoryFilter = categoryMap[categoryName] || categoryName.toLowerCase()
+
+  router.push({
+    name: 'explore',
+    query: {
+      category: categoryFilter,
+    },
+  })
 }
 
 const features = [
@@ -88,8 +103,10 @@ const categories = [
 <template>
   <div>
     <!-- Hero Section -->
-    <section class="relative bg-gradient-to-br from-gray-50 to-white overflow-hidden">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+    <section
+      class="h-[calc(100vh-64px)] bg-gradient-to-br from-gray-50 to-white flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-24 lg:py-32"
+    >
+      <div class="max-w-7xl mx-auto">
         <div class="text-center">
           <img src="/src/assets/images/logo-256.png" alt="Icon" class="mx-auto size-96" />
           <p
@@ -101,49 +118,38 @@ const categories = [
 
           <!-- CTA Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <RouterLink
-              to="/vst-gallery"
-              class="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition-colors font-medium text-lg"
-            >
-              Découvrir les VST
-            </RouterLink>
-            <RouterLink
-              to="/register"
-              class="border border-gray-300 text-gray-700 px-8 py-3 rounded-full hover:bg-gray-50 transition-colors font-medium text-lg"
-            >
-              Créer un compte
-            </RouterLink>
+            <Button to="/explore" size="lg">Découvrir les plugins disponible</Button>
           </div>
         </div>
       </div>
 
       <!-- Stats Section -->
-      <div class="bg-white py-16 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="text-center">
-              <div class="text-3xl lg:text-4xl font-light text-gray-900 mb-1">1,250+</div>
-              <div class="text-gray-600">Plugins VST</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl lg:text-4xl font-light text-gray-900 mb-1">50,000+</div>
-              <div class="text-gray-600">Téléchargements</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl lg:text-4xl font-light text-gray-900 mb-1">2,500+</div>
-              <div class="text-gray-600">Utilisateurs</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl lg:text-4xl font-light text-gray-900 mb-1">150+</div>
-              <div class="text-gray-600">Créateurs</div>
-            </div>
+      <div class="max-w-7xl mx-auto w-full mt-24">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div class="text-3xl lg:text-4xl font-light text-gray-900 mb-1">1,250+</div>
+            <div class="text-gray-600">Plugins VST</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl lg:text-4xl font-light text-gray-900 mb-1">50,000+</div>
+            <div class="text-gray-600">Téléchargements</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl lg:text-4xl font-light text-gray-900 mb-1">2,500+</div>
+            <div class="text-gray-600">Utilisateurs</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl lg:text-4xl font-light text-gray-900 mb-1">150+</div>
+            <div class="text-gray-600">Créateurs</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Categories Section -->
-    <section class="py-20 lg:py-32 bg-gray-50">
+    <section
+      class="relative py-20 lg:py-32 bg-gradient-to-b from-blue-50 to-gray-50 border-t border-gray-200"
+    >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
           <h2 class="text-4xl lg:text-5xl font-light text-gray-900 mb-4">Catégories Populaires</h2>
@@ -153,15 +159,15 @@ const categories = [
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <RouterLink
+          <div
             v-for="category in categories"
             :key="category.name"
-            to="/vst-gallery"
-            class="group bg-white rounded-2xl p-6 hover:bg-gray-50 transition-all duration-300 cursor-pointer border border-gray-200"
+            @click="navigateToCategory(category.name)"
+            class="group bg-white rounded-2xl p-6 hover:bg-gray-50 transition-all duration-300 cursor-pointer border border-gray-100 hover:border-gray-200"
           >
             <div class="flex items-center gap-4">
               <div
-                class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-200 transition-colors"
+                class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors"
               >
                 <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
                   <path :d="category.icon" />
@@ -172,13 +178,15 @@ const categories = [
                 <p class="text-sm text-gray-600">{{ category.count }} plugins</p>
               </div>
             </div>
-          </RouterLink>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Features Section -->
-    <section class="py-20 lg:py-32 bg-white">
+    <section
+      class="py-20 lg:py-32 bg-gradient-to-b from-blue-50 to-gray-50 border-t border-gray-200"
+    >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
           <h2 class="text-4xl lg:text-5xl font-light text-gray-900 mb-4">Pourquoi SoundVault ?</h2>
@@ -255,7 +263,7 @@ const categories = [
 
           <!-- Small cards Row 1 -->
           <div
-            class="bg-white rounded-3xl p-6 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+            class="bg-white rounded-3xl p-6 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 cursor-pointer group"
           >
             <div
               class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-100 group-hover:scale-110 transition-all duration-300"
@@ -275,7 +283,7 @@ const categories = [
           </div>
 
           <div
-            class="bg-white rounded-3xl p-6 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+            class="bg-white rounded-3xl p-6 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 cursor-pointer group"
           >
             <div
               class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-100 group-hover:scale-110 transition-all duration-300"
@@ -321,7 +329,7 @@ const categories = [
 
           <!-- Small cards Row 2 -->
           <div
-            class="bg-white rounded-3xl p-6 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+            class="bg-white rounded-3xl p-6 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 cursor-pointer group"
           >
             <div
               class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-100 group-hover:scale-110 transition-all duration-300"
@@ -341,7 +349,7 @@ const categories = [
           </div>
 
           <div
-            class="bg-white rounded-3xl p-6 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+            class="bg-white rounded-3xl p-6 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 cursor-pointer group"
           >
             <div
               class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-red-100 group-hover:scale-110 transition-all duration-300"
@@ -364,7 +372,9 @@ const categories = [
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 lg:py-32 bg-gray-50">
+    <section
+      class="py-20 lg:py-32 bg-gradient-to-b from-blue-50 to-gray-50 border-t border-gray-200"
+    >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-4xl lg:text-5xl font-light text-gray-900 mb-6">
           Prêt à créer votre prochaine production ?
@@ -374,18 +384,8 @@ const categories = [
           meilleurs plugins VST
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <RouterLink
-            to="/register"
-            class="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition-colors font-medium text-lg"
-          >
-            Créer un compte gratuit
-          </RouterLink>
-          <RouterLink
-            to="/vst-gallery"
-            class="border border-gray-300 text-gray-700 px-8 py-3 rounded-full hover:bg-gray-50 transition-colors font-medium text-lg"
-          >
-            Parcourir les VST
-          </RouterLink>
+          <Button to="/explore" size="lg" variant="primary"> Parcourir les VST </Button>
+          <Button to="/register" size="lg" variant="secondary"> Devenir Créateur </Button>
         </div>
       </div>
     </section>

@@ -29,8 +29,8 @@ This is a Vue 3 + TypeScript + Vite frontend application for SoundVault with the
 
 **Layout System**: 
 - Uses nested routing with `AppLayout.vue` as the main layout wrapper
-- Layout includes: `AppHeader`, `AppSidebar`, and `AppFooter` components
-- Grid-based layout: 64px header, 256px sidebar, remaining space for content
+- Layout includes: `AppHeader` and `AppFooter` components
+- Simple responsive layout with main content area for RouterView
 
 **Authentication Flow**:
 - Pinia store in `stores/auth.ts` manages authentication state
@@ -45,8 +45,10 @@ This is a Vue 3 + TypeScript + Vite frontend application for SoundVault with the
 - Supports all HTTP methods (GET, POST, PUT, PATCH, DELETE)
 
 **File Structure**:
-- `components/core/`: Layout components (header, sidebar, footer)
-- `views/`: Page components organized by feature (auth/, profile/)
+- `components/core/`: Layout components (header, footer)
+- `components/ui/`: Reusable UI components (Button, Card, Input, etc.)
+- `components/features/`: Feature-specific components (e.g., VST components)
+- `views/`: Page components organized by feature (auth/, profile/, vst/, etc.)
 - `stores/`: Pinia state management
 - `composables/`: Reusable Vue composables
 - `types/`: TypeScript type definitions
