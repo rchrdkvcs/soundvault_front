@@ -197,11 +197,11 @@ onMounted(() => {
             <div class="flex flex-col md:flex-row gap-6">
               <!-- Avatar -->
               <div class="flex-shrink-0">
-                <img
-                  :src="profile.avatar"
-                  :alt="profile.username"
-                  class="w-32 h-32 rounded-full object-cover"
-                />
+                <span
+                  class="rounded-full bg-gray-200 w-24 h-24 flex items-center justify-center text-4xl font-bold text-gray-600"
+                >
+                  {{ authStore.user?.username?.charAt(0).toUpperCase() }}
+                </span>
               </div>
 
               <!-- Info -->
