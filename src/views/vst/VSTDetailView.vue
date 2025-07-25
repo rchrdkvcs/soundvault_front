@@ -173,12 +173,15 @@ onMounted(() => {
               <!-- Image Gallery -->
               <Card>
                 <div class="relative">
-                  <div class="aspect-video bg-gray-100 rounded-xl overflow-hidden">
-                    <img
-                      :src="vst.images[currentImageIndex]"
-                      :alt="`${vst.name} - Image ${currentImageIndex + 1}`"
-                      class="w-full h-full object-cover"
-                    />
+                  <div
+                    class="aspect-video bg-blue-500 rounded-xl overflow-hidden flex items-center justify-center text-2xl font-semibold text-white"
+                  >
+                    <!--                    <img-->
+                    <!--                      :src="vst.images[currentImageIndex]"-->
+                    <!--                      :alt="`${vst.name} - Image ${currentImageIndex + 1}`"-->
+                    <!--                      class="w-full h-full object-cover"-->
+                    <!--                    />-->
+                    {{ vst.name }}
                   </div>
 
                   <!-- Image Navigation -->
