@@ -222,7 +222,7 @@ const handleSubmit = async (e: Event) => {
             :full-width="true"
             size="lg"
             variant="secondary"
-            class="!bg-green-600 hover:!bg-green-700 focus:!ring-green-500"
+            class="!bg-green-600 hover:!bg-green-700 focus:!ring-green-500 !border-none !text-white"
           >
             <span
               v-if="isLoading"

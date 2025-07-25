@@ -24,7 +24,7 @@ const isActive = (path: string) => {
 <template>
   <header class="sticky top-0 z-50 bg-white/75 backdrop-blur-md border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-3 w-full h-16">
+      <div class="flex md:grid grid-cols-3 w-full justify-between h-16">
         <!-- Logo -->
         <RouterLink
           to="/"
